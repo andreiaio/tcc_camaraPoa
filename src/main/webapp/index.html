@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="../../favicon.ico">
+
+	<title>Sistema de Auditoria Legislativa de Poá</title>
+	<!-- this is the code that will allow icon to be visible in the title bar of the brower -->
+    <link rel="icon" type="image/ico" href="images/poa.png" />
+	<!-- Bootstrap core CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap theme -->
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+
+
+	<script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+	
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+	<!-- Fixed navbar -->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		
+		<div class="container">
+			<div class="navbar-header">
+				
+				<a class="navbar-brand logo" href="#home"><img src="images/poa.png" class="logo" alt="brasão do município de Poá"></a>
+			</div>
+
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav  espaco-nav-logo">
+					<li class="active"><a href="#">Home</a></li>
+					<li>
+						<a href="#atividadeLegislativa" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							Atividade Legislativa
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Frequência Geral</a></li>
+							<li role="separator" class="divider"></li>
+							<li class="dropdown-header">Atividade de Vereadores</li>
+							<li><a href="#">Individual</a></li>
+							<li><a href="#">Geral</a></li>
+							<li role="separator" class="divider"></li>
+							<li class="dropdown-header">Atividade de Comissões</li>
+							<li><a href="#">Individual</a></li>
+							<li><a href="#">Geral</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Vetos</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Positivação</a></li>							
+						</ul>
+					</li>
+					<li>
+						<a href="#naoConformidades" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							Não Conformidades
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Número de Proposituras</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Numeração de Processos</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Situação Desatualizada</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Documentos Ausentes</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Correta Descrição Quórum</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Indicação de Autoria</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Parecer de Admissão</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Pareceres de Comissões</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Assincronias</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Metadados de Não-Conformidades</a></li>							
+						</ul>
+
+					</li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</nav>
+
+	<div class="container theme-showcase" role="main">
+
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="jumbotron">
+			<h2>Verificação de Dados - Atividade Legislativa de Poá</h2>
+			<p>Seja bem vindo(a) ao Portal!</p>
+			<canvas id="myChart" width="300" height="100"></canvas>
+			
+		</div>
+
+		<div class="row">
+			<!-- <div class="col-md-12">
+				<a href="#" id="btnLoadUsers" class="btn btn-primary">Carregar
+					usuarios</a>
+			</div>
+
+
+			<table id="usertable" class="table">
+				<thead>
+					<tr>
+						<th>Codigo</th>
+						<th>Nome</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table> -->
+		</div>
+	</div>
+	<!-- /container -->
+
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="js/jquery-1.12.1.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+    $(document).ready(function(){
+    	$("#btnLoadUsers").click(function(e){
+    		e.preventDefault();
+    		$.get( "rest/service/todasPessoas", function( data ) {
+    			 $("#usertable tbody").html("");
+    			$.each(data,function(i,item){
+    			    $("#usertable tbody").append(
+    			        "<tr>"
+    			            +"<td>"+item.codigo+"</td>"
+    			            +"<td>"+item.nome+"</td>"
+    			        +"</tr>" )
+    			    })
+    		 })
+    	})
+    	
+    	
+   		$.get( "rest/service/todosDocumentos", function( data ) {
+   			var qtdSancionada = 0;
+   			var qtdNaoSancionada = 0;
+   			
+   			$.each(data,function(i,item){
+   			    if(item.doc_situa == 1) qtdSancionada++;
+   			    if(item.doc_situa == 2) qtdNaoSancionada++;
+   		 	});
+   			
+   			console.log("qtdSancionada: " + qtdSancionada);
+   			console.log("qtdNaoSancionada: " + qtdNaoSancionada);
+   	
+   			var ctx = document.getElementById('myChart');
+   	    	var myChart = new Chart(ctx, {
+   	    	    type: 'bar',
+   	    	    data: {
+   	    	        labels: ['Sancionado', 'Não Sancionado'],
+   	    	        datasets: [{
+   	    	            label: 'Situação dos Documentos',
+   	    	            data: [qtdSancionada, qtdNaoSancionada],
+   	    	            backgroundColor: [
+   	    	                'rgba(255, 99, 132, 0.2)',
+   	    	                'rgba(54, 162, 235, 0.2)',
+   	    	             
+   	    	            ],
+   	    	            borderColor: [
+   	    	                'rgba(255, 99, 132, 1)',
+   	    	                'rgba(54, 162, 235, 1)',
+   	    	            ],
+   	    	            borderWidth: 1
+   	    	        }]
+   	    	    },
+   	    	    options: {
+   	    	        scales: {
+   	    	            yAxes: [{
+   	    	                ticks: {
+   	    	                    beginAtZero: true
+   	    	                }
+   	    	            }]
+   	    	        }
+   	    	    }
+   	    	});
+   			
+   		});   
+    });
+    </script>
+   
+</body>
+</html>
